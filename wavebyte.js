@@ -57,6 +57,8 @@ var Wavebyte = function(opts) {
 				audioBufferSourceNode.buffer = buffer;
 				self.source = audioBufferSourceNode;
 				console.log('Decode succussful');
+				//@TODO remove this
+				document.getElementById('startButton').disabled = false;
 			}, function(e) {
 				console.log(e);
 			});
@@ -117,6 +119,8 @@ var Wavebyte = function(opts) {
 		if (self.source !== null) {
 			self.source.stop(0);
 		}
+		//@TODO remove this
+		document.getElementById('startButton').disabled = true;
 	};
 
 	if (opts.useFloats) {
@@ -167,10 +171,10 @@ var Wavebyte = function(opts) {
 		//}
 
 		//BPM STUFF
-		self.BEAT_DECAY_RATE = 0.998;
+		self.BEAT_DECAY_RATE = 0.995;
 		self.BEAT_RANGE_LOW = 0.25;
 		self.BEAT_RANGE_HIGH = 0.5;
-		var BEAT_MIN = 0.5; //level less than this is no beat
+		self.BEAT_MIN = 0.49; //level less than this is no beat
 		var beatCutOff = 0;
 
 		if (opts.onBeat != null) {
@@ -200,12 +204,12 @@ var Wavebyte = function(opts) {
 
 			// Beat detection
 			// --------------
-			if (volume  > beatCutOff && volume > BEAT_MIN){
+			if (volume  > beatCutOff && volume > self.BEAT_MIN){
 				self.onBeat();
 				beatCutOff = volume * 1.1;
 			} else {
 				beatCutOff *= self.BEAT_DECAY_RATE;
-				beatCutOff = Math.max(beatCutOff, BEAT_MIN);
+				beatCutOff = Math.max(beatCutOff, self.BEAT_MIN);
 			}
 		}
 	}

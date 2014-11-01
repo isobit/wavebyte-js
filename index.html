@@ -31,7 +31,7 @@ body {
 	<body>
 		<div id="controls">
 			<input type="file" id="uploadedFile"></input>
-			<input type='button' id='startButton' value="Start" onclick='wavebyte.start()'>
+			<input type='button' id='startButton' value="Start" onclick='wavebyte.start()' disabled=true>
 			<input type='button' id='stopButton' value="Stop" onclick='wavebyte.stop()'>
 			<span>Beat: </span><div id='beat'></div>
 		</div>
@@ -50,8 +50,7 @@ var beatDiv = document.getElementById('beat');
 var wavebyte = new Wavebyte({
 	bpmEnabled: true,
 	onBeat: function() {
-		setTimeout(function() { beatDiv.style.backgroundColor = '#0066FF'; }, 0);
-		setTimeout(function() { beatDiv.style.backgroundColor = '#222'; }, 100);
+		setTimeout(function() { waveView.material.uniforms['beat'].value = 1.0; }, 0);
 	},
 	delay: 30.0
 });

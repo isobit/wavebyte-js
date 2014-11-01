@@ -6,6 +6,10 @@ var Wave = new Glimpse({
 					type: "fv1",
 					value: []
 				},
+				beat: {
+					type: 'f',
+					value: 0.0
+				},
 				t: {
 					type: "f",
 					value: 0.0
@@ -42,9 +46,10 @@ var Wave = new Glimpse({
 					"gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);" +
 				"}",
 			fragmentShader: 
+				"uniform float beat;" +
 				"varying float dr;" +
 				"void main() {" +
-					"vec3 color = vec3(0.4 * dr, 0.6 * dr, 0.6 / dr);" +
+					"vec3 color = vec3(0.4 * dr + 0.5 * (beat - dr / 3.0), 0.6 * dr, 0.6 / dr);" +
 					"gl_FragColor = vec4(color.rgb, 1.0);" +
 				"}"
 		});
@@ -57,6 +62,7 @@ var Wave = new Glimpse({
 	},
 	update: function(dt) {
 		this.material.uniforms['t'].value = .00025 * dt;
+		this.material.uniforms['beat'].value *= 0.95;
 		if (wavebyte.playing) {
 			wavebyte.update();
 			var wavebyteData = wavebyte.freqData();
