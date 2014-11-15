@@ -292,7 +292,7 @@ THREE.OrbitControls = function (object, domElement) {
 		if ( lastPosition.distanceToSquared( this.object.position ) > EPS
 		    || 8 * (1 - lastQuaternion.dot(this.object.quaternion)) > EPS ) {
 
-			this.dispatchEvent( changeEvent );
+			//this.dispatchEvent( changeEvent );
 
 			lastPosition.copy( this.object.position );
 			lastQuaternion.copy (this.object.quaternion );
