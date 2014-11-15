@@ -22,31 +22,36 @@ define([
 	"wavevis/WaveGlimpse"
 ], function($, wavebyte, WaveGlimpse) {
 
-	var analyzer = new wavebyte.Analyzer({
-		bpmEnabled: true,
-		onBeat: function() {
-			setTimeout(function() { waveView.material.uniforms['beat'].value = 1.0; }, 0);
-		},
-		delay: 30.0
-	});
-
 	$(document).ready(function() {
-		analyzer.registerFileInput($('#uploadedFile').get(0));
+		try {
+			var analyzer = new wavebyte.Analyzer({
+				bpmEnabled: true,
+				onBeat: function() {
+					setTimeout(function() { waveView.material.uniforms['beat'].value = 1.0; }, 0);
+				},
+				delay: 30.0
+			});
+			analyzer.registerFileInput($('#uploadedFile').get(0));
 
-		var waveGlimpse = new WaveGlimpse(analyzer);
-		var waveView = waveGlimpse.createView($('#wave').get(0));
+			var waveGlimpse = new WaveGlimpse(analyzer);
+			var waveView = waveGlimpse.createView($('#wave').get(0));
 
-		function resize() {
-			var padding = 10;
-			var w = window.innerWidth - padding;
-			var h = window.innerHeight - padding;
-			waveView.resize(w, h);
+			function resize() {
+				var padding = 10;
+				var w = window.innerWidth - padding;
+				var h = window.innerHeight - padding;
+				waveView.resize(w, h);
+			}
+			window.addEventListener('resize', resize, false);
+			resize();
+
+			$('#startButton').click(analyzer.start);
+			$('#stopButton').click(analyzer.stop);
+		} catch(e) {
+			$('#error-msg').text('Whoops! Something went wrong.');
+			$('#error').show();
+			console.error(e);
 		}
-		window.addEventListener('resize', resize, false);
-		resize();
-
-		$('#startButton').click(analyzer.start);
-		$('#stopButton').click(analyzer.stop);
 	});
 
 });

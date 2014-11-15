@@ -56,12 +56,12 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 						"gl_FragColor = vec4(color.rgb, 1.0);" +
 						"}"
 				});
-
-				document.getElementById('noWebGL').style.display = 'none';
-				var controls = new THREE.OrbitControls(this.camera, this.element);
-				controls.noPan = true;
-				controls.damping = 0.2;
-				controls.addEventListener('change', this.render);
+				this.controls = new THREE.OrbitControls(this.camera, this.element);
+				this.controls.noPan = true;
+				this.controls.damping = 0.2;
+				this.controls.addEventListener('change', this.render);
+				document.getElementById('error').style.display = 'none';
+				//setTimeout(function() {document.getElementById('noWebGL').style.display = 'none';}, 0.2);
 			},
 			update: function(dt) {
 				this.material.uniforms['t'].value = .00025 * dt;
@@ -89,10 +89,16 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 					new THREE.PlaneGeometry(width, height, dx, dy),
 					this.material
 				);
-				this.mesh.rotation.x = Math.PI / -3;
-				this.mesh.position.y = height / 10;
-				this.camera.position.z = width - 400;
+				this.mesh.rotation.x = -Math.PI / 2;
 				this.scene.add(this.mesh);
+
+				this.camera.position.z = width * 0.8;
+				this.camera.position.y = height * 0.75;
+				//this.controls.object = this.camera;
+				this.controls.update();
+				console.log("Done resizing.");
+				//this.controls.rotateLeft(0);
+				//console.log(this.controls);
 			}
 		});
 	};
