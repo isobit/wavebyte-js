@@ -22,7 +22,29 @@ define([
 	"wavevis/WaveGlimpse"
 ], function($, wavebyte, WaveGlimpse) {
 
+	var songProgress = $('#song-progress');
+	function setSongProgress(p, delay) { 
+		setTimeout(function() {
+			songProgress.width(p + "%");
+		}, delay);
+	};
+	setSongProgress(10, 1000);
+	setSongProgress(20, 2000);
+	setSongProgress(30, 3000);
+	setSongProgress(40, 4000);
+	setSongProgress(50, 5000);
+	setSongProgress(60, 6000);
+	setSongProgress(70, 7000);
+	setSongProgress(80, 8000);
+	setSongProgress(90, 9000);
+	setSongProgress(100, 10000);
+
 	$(document).ready(function() {
+		function showError(e) {
+			$('#error-msg').text('Whoops! Something went wrong.');
+			$('#error').show();
+			console.error(e);
+		}
 		try {
 			var analyzer = new wavebyte.Analyzer({
 				bpmEnabled: true,
@@ -45,12 +67,14 @@ define([
 			window.addEventListener('resize', resize, false);
 			resize();
 
-			$('#startButton').click(analyzer.start);
-			$('#stopButton').click(analyzer.stop);
+			$('#startButton').click(function() {
+				try { analyzer.start(); } catch(e) { showError(e);}
+			});
+			$('#stopButton').click(function() {
+				try { analyzer.stop(); } catch(e) { showError(e);}
+			});
 		} catch(e) {
-			$('#error-msg').text('Whoops! Something went wrong.');
-			$('#error').show();
-			console.error(e);
+			showError(e);
 		}
 	});
 
