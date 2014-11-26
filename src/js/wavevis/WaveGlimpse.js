@@ -32,7 +32,7 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 					},
 					wireframe: true,
 					vertexShader:
-						"uniform float audio[500];" +
+						"uniform float audio[300];" +
 						"uniform float t;" +
 						"uniform float dMax;" +
 						"uniform float w;" +
@@ -41,7 +41,7 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 						"void main() { " +
 						"float rad = distance(vec2(position.x, position.y), vec2(0, 0));" +
 						"float dRad = rad / (0.6 * w);" +
-						"float drAudio = audio[int(dRad * 500.0)];" +
+						"float drAudio = audio[int(dRad * 300.0)];" +
 						"dr = exp(drAudio - 0.5);" +
 						"float d = dMax * dr;" +
 						//"// Displace the position along its normal and project it" +
@@ -53,7 +53,8 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 						"varying float dr;" +
 						"void main() {" +
 						"vec3 color = vec3(0.4 * dr + 0.5 * (beat - dr / 3.0), 0.6 * dr, 0.6 / dr);" +
-						"gl_FragColor = vec4(color.rgb, 1.0);" +
+						"float thresh = (dr - 0.5) * 1.5;" + //(dr > 0.75)? 1.0 : 0.5;" +
+						"gl_FragColor = vec4(color.rgb * thresh, 1.0);" +
 						"}"
 				});
 				this.controls = new THREE.OrbitControls(this.camera, this.element);
@@ -69,9 +70,9 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 				if (wavebyte.playing) {
 					wavebyte.update();
 					var wavebyteData = wavebyte.freqData();
-					var audioData = new Array(500);
+					var audioData = new Array(300);
 					//for (i = 0; i < wavebyteData.length; i++) {
-					for (var i = 0; i < 500; i++) {
+					for (var i = 0; i < 300; i++) {
 						audioData[i] = wavebyteData[i] / 256.0;
 					}
 					this.material.uniforms['audio'].value = audioData;
