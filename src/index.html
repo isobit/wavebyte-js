@@ -7,24 +7,34 @@
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<script data-main="js/main" src="components/requirejs/require.js"></script>
 	</head>
-	<body>
+	<body ng-controller="Main">
 		<div id="controls">
 			<div class="buttons">
-				<input type="file" id="uploadedFile" class="btn btn-default pull-left"></input>
-				<button id='startButton' class="btn btn-info pull-left">
-					<i class="fa fa-play"></i>
-				</button>
-				<button type='button' id='stopButton' class="btn btn-danger pull-left">
-					<i class="fa fa-stop"></i>
-				</button>
+				<button class="btn" ng-click="load()">Load</button>
+				<input ng-model="trackID" />
+				<audio controls>
+					<p>Browser too old to support HTML5 audio? How depressing!</p>
+				</audio>
 			</div>
-			<div class="progress-container">
-				<div class="progress">
-					<div id="song-progress" class="progress-bar progress-bar-info" role="progressbar" style="width: 60%;"></div>
-				</div>
-			</div>
+			<!--<div class="buttons">-->
+				<!--<input type="file" id="uploadedFile" class="btn btn-default pull-left"></input>-->
+				<!--<button id='startButton' class="btn btn-info pull-left">-->
+					<!--<i class="fa fa-play"></i>-->
+				<!--</button>-->
+				<!--<button type='button' id='stopButton' class="btn btn-danger pull-left">-->
+					<!--<i class="fa fa-stop"></i>-->
+				<!--</button>-->
+			<!--</div>-->
+			<!--<div class="progress-container">-->
+				<!--<div class="progress">-->
+					<!--<div id="song-progress" class="progress-bar progress-bar-info" role="progressbar" style="width: 60%;"></div>-->
+				<!--</div>-->
+			<!--</div>-->
 		</div>
 		<div id="sidebar">
+		</div>
+		<div id="load-dialog">
+
 		</div>
 		<div id="graphics">
 			<div id="wave"></div>
