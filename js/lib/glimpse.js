@@ -58,7 +58,7 @@ define(["threejs"], function(THREE) {
 			view.animate();
 			return view;
 		};
-	}
+	};
 
 	return glimpse;
 });

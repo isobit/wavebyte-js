@@ -1,11 +1,14 @@
 define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 
-	var WaveGlimpse = function(wavebyte) {
+	var WaveGlimpse = function(getFreqData) {
+
+		var audioDataLength = 300;
+
 		return new glimpse.GlimpseFactory({
 			init: function() {
 				this.material = new THREE.ShaderMaterial({
 					uniforms: {
-						audio: {
+						audioData: {
 							type: "fv1",
 							value: []
 						},
@@ -17,7 +20,7 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 							type: "f",
 							value: 0.0
 						},
-						dMax: {
+						drMax: {
 							type: "f",
 							value: 50.0
 						},
@@ -32,59 +35,61 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 					},
 					wireframe: true,
 					vertexShader:
-						"uniform float audio[300];" +
-						"uniform float t;" +
-						"uniform float dMax;" +
-						"uniform float w;" +
-						"uniform float h;" +
-						"varying float dr;" +
-						"void main() { " +
-						"float rad = distance(vec2(position.x, position.y), vec2(0, 0));" +
-						"float dRad = rad / (0.6 * w);" +
-						"float drAudio = audio[int(dRad * 300.0)];" +
-						"dr = exp(drAudio - 0.5);" +
-						"float d = dMax * dr;" +
+					"uniform float audioData["+audioDataLength+"];" +
+					"uniform float t;" +
+					"uniform float drMax;" +
+					"uniform float w;" +
+					"uniform float h;" +
+					"varying float audio;" +
+					"void main() { " +
+					"float rad = distance(vec2(position.x, position.y), vec2(0, 0));" +
+					"float radNorm = rad / (0.55 * w);" +
+					"audio = audioData[int(radNorm * "+audioDataLength+".0)];" +
+					"float displacement = (drMax * pow(audio, 2.0));" +
 						//"// Displace the position along its normal and project it" +
-						"vec3 newPosition = position + normal * d;" +
-						"gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);" +
-						"}",
-					fragmentShader: 
-						"uniform float beat;" +
-						"varying float dr;" +
-						"void main() {" +
-						"vec3 color = vec3(0.4 * dr + 0.5 * (beat - dr / 3.0), 0.6 * dr, 0.6 / dr);" +
-						"float thresh = (dr - 0.5) * 1.5;" + //(dr > 0.75)? 1.0 : 0.5;" +
-						"gl_FragColor = vec4(color.rgb * thresh, 1.0);" +
-						"}"
+					"vec3 newPosition = position + normal * displacement;" +
+					"gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);" +
+					"}",
+					fragmentShader:
+					"uniform float t;" +
+					"uniform float beat;" +
+					"varying float audio;" +
+					"void main() {" +
+					"vec3 maxColor = vec3(0.2, 0.8, 0.2);" +
+					"vec3 minColor = vec3(0.2, 0.2, 0.6);" +
+					"float mix = audio + 0.1;" +
+					"vec3 color = maxColor * mix + minColor;" +
+					//"float alpha = audio + 0.1;" +
+					"gl_FragColor = vec4(color.rgb, 1.0);" +
+					"}"
 				});
 				this.controls = new THREE.OrbitControls(this.camera, this.element);
 				this.controls.noPan = true;
 				this.controls.damping = 0.2;
 				this.controls.addEventListener('change', this.render);
+
+				// @TODO Move elsewhere
 				document.getElementById('error').style.display = 'none';
-				//setTimeout(function() {document.getElementById('noWebGL').style.display = 'none';}, 0.2);
 			},
 			update: function(dt) {
 				this.material.uniforms['t'].value = .00025 * dt;
 				this.material.uniforms['beat'].value *= 0.95;
-				if (wavebyte.playing) {
-					wavebyte.update();
-					var wavebyteData = wavebyte.freqData();
-					var audioData = new Array(300);
-					//for (i = 0; i < wavebyteData.length; i++) {
-					for (var i = 0; i < 300; i++) {
-						audioData[i] = wavebyteData[i] / 256.0;
-					}
-					this.material.uniforms['audio'].value = audioData;
+
+				var wavebyteData = getFreqData();
+				var audioData = new Array(audioDataLength);
+				for (var i = 0; i < audioDataLength; i++) {
+					audioData[i] = wavebyteData[i] / 256.0;
 				}
+				this.material.uniforms['audioData'].value = audioData;
 			},
 			resize: function(width, height) {
 				this.material.uniforms['w'].value = width;
 				this.material.uniforms['h'].value = height;
-				this.material.uniforms['dMax'].value = height / 8;
-				var res = 14; //15
+				this.material.uniforms['drMax'].value = height / 6;
+				var res = 14;
 				var dx = Math.max(40, Math.round(width / res));
 				var dy = Math.max(40, Math.round(height / res));
+
 				this.scene.remove(this.mesh);
 				this.mesh = new THREE.Mesh(
 					new THREE.PlaneGeometry(width, height, dx, dy),
@@ -95,11 +100,7 @@ define(["glimpse", "threejs", "OrbitControls"], function(glimpse, THREE) {
 
 				this.camera.position.z = width * 0.8;
 				this.camera.position.y = height * 0.75;
-				//this.controls.object = this.camera;
 				this.controls.update();
-				console.log("Done resizing.");
-				//this.controls.rotateLeft(0);
-				//console.log(this.controls);
 			}
 		});
 	};
