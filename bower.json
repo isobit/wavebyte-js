@@ -19,6 +19,7 @@
     "requirejs": "~2.1.15",
     "font-awesome": "~4.2.0",
     "vue": "~0.11.3",
-    "promisejs": "git@github.com:stackp/promisejs.git"
+    "promisejs": "git@github.com:stackp/promisejs.git",
+    "bourbon": "~4.0.2"
   }
 }
