@@ -3,7 +3,7 @@
  */
 
 define([
-    "audiocontext"
+    "lib/audiocontext"
 ], function(
     AudioContext
 ) {
