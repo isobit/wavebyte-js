@@ -188,6 +188,7 @@ define([
 
 	// Final init -------------------------------------
 
-	page.loadUrl("https://soundcloud.com/mumbojumbo/smack-ma-glitch-up-mix");
+	//page.loadUrl("https://soundcloud.com/mumbojumbo/smack-ma-glitch-up-mix");
+	page.loadUrl("https://soundcloud.com/glaucus-atlanticus/paralytic-dreams");
 
 });
