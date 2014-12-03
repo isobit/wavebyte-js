@@ -18,7 +18,7 @@ require.config({
 define([
 	"vue",
 	"threejs",
-	"lib/audiocontext",
+	"lib/AudioContext",
 	"Soundcloud",
 	"WaveGlimpse",
 	"BeatNode"
