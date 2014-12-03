@@ -4,47 +4,77 @@
 		<meta charset="utf-8" />
 		<title>Wavebyte (Beta)</title>
 		<link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.min.css">
+		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">-->
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<script data-main="js/main" src="components/requirejs/require.js"></script>
 	</head>
-	<body ng-controller="Main">
-		<div id="controls">
-			<div class="buttons">
-				<button class="btn" ng-click="load()">Load</button>
-				<input ng-model="trackID" />
-				<audio controls>
-					<p>Browser too old to support HTML5 audio? How depressing!</p>
-				</audio>
-			</div>
-			<!--<div class="buttons">-->
-				<!--<input type="file" id="uploadedFile" class="btn btn-default pull-left"></input>-->
-				<!--<button id='startButton' class="btn btn-info pull-left">-->
-					<!--<i class="fa fa-play"></i>-->
-				<!--</button>-->
-				<!--<button type='button' id='stopButton' class="btn btn-danger pull-left">-->
-					<!--<i class="fa fa-stop"></i>-->
-				<!--</button>-->
-			<!--</div>-->
-			<!--<div class="progress-container">-->
-				<!--<div class="progress">-->
-					<!--<div id="song-progress" class="progress-bar progress-bar-info" role="progressbar" style="width: 60%;"></div>-->
-				<!--</div>-->
-			<!--</div>-->
-		</div>
-		<div id="sidebar">
-		</div>
-		<div id="load-dialog">
+	<body>
 
+        <div id="audio-controls" class="sidebar-push" v-class="pushed: showSidebar">
+            <button v-on="click: toggleSidebar()" class="btn"><i class="fa fa-bars"></i></button>
+            <audio controls>
+                <p>Browser too old to support HTML5 audio? How depressing!</p>
+            </audio>
+			<button class="btn" v-on="click: showLoadModal = true">Change Song</button>
+        </div>
+
+
+        <div id="graphics">
+            <div id="wave"></div>
+        </div>
+
+
+		<div id="controls" class="sidebar" v-class="show: showSidebar">
+			<main>
+				<h3>Song</h3>
+				<section>
+					<span style="text-overflow: ellipsis">{{songTitle}}</span>
+				</section>
+				<h3>Visualizer</h3>
+				<h4>Colors</h4>
+				<section>
+					<label>
+						Min
+						<input type="color" v-model="minColor" />
+					</label>
+					<label>
+						Max
+						<input type="color" v-model="maxColor" />
+					</label>
+				</section>
+				<h4>Params</h4>
+				<section>
+					<label>
+						radPow
+						<input type="range" min=1.0 max=2.0 step=0.05 v-model="radPow" />
+						<input type="number" v-model="radPow" />
+					</label>
+				</section>
+			</main>
 		</div>
-		<div id="graphics">
-			<div id="wave"></div>
-		</div>
-		<div id="error">
+
+
+        <div id="load-modal" class="modal" v-class="show: showLoadModal">
+            <button class="modal-close btn" v-on="click: showLoadModal = false"><i class="fa fa-close"></i></button>
+            <main>
+				<label>
+					Paste Soundcloud URL here and hit Enter:
+					<input type="text" v-model="scUrl" v-on="keyup: submitUrl(scUrl) | key enter" />
+				</label>
+			</main>
+        </div>
+
+
+		<div id="error" v-show="showError">
 			<span id="error-msg">
-				It appears your browser doesn't support WebGL. Sorry!
+				{{errorMsg}}
 			</span>
 			<br>
 			Note: This site has been developed to work with <a href="https://www.google.com/chrome/browser/">Google Chrome</a>.
+			<br>
+			Check <a href="http://get.webgl.org/">get.webgl.org</a> to test if your browser supports WebGL.
 		</div>
+
+
 	</body>
 </html>

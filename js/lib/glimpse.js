@@ -14,14 +14,14 @@ define(["threejs"], function(THREE) {
 		} )();
 	}
 
-	function GlimpseView(model, element) {
+	function GlimpseView(model, element, params) {
 		var self = this;
 		this.model = model;
 		this.element = element;
 
 		this.renderer = new THREE.WebGLRenderer({alpha: true});
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera(45, 1, 1, 10000);
+		this.camera = new THREE.PerspectiveCamera(params.fov, 1, 1, 10000);
 		this.camera.position.z = 750;
 		this.camera.lookAt(this.scene.position);
 		this.start = Date.now();
@@ -47,14 +47,19 @@ define(["threejs"], function(THREE) {
 		this.element.appendChild(this.renderer.domElement);
 	}
 
-	glimpse.GlimpseFactory = function(params) {
+	glimpse.GlimpseFactory = function(opts) {
 		var self = this;
-		this.init = params.init;
-		this.update = params.update;
-		this.resize = params.resize;
+		this.init = opts.init;
+		this.update = opts.update;
+		this.resize = opts.resize;
+
+		opts.view = opts.view || {};
+		var viewParams = {
+			fov: opts.view.fov || 45
+		};
 
 		this.createView = function(element) {
-			var view = new GlimpseView(self, element);
+			var view = new GlimpseView(self, element, viewParams);
 			view.animate();
 			return view;
 		};
