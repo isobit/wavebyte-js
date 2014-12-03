@@ -81,6 +81,7 @@ define([], function() {
 			}
 
 			self.analyser = self.audioContext.createAnalyser();
+			self.analyser.fftSize = 2048;
 			//connect the source to the analyser
 			self.source.connect(self.analyser);
 

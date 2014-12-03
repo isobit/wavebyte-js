@@ -1,70 +1,80 @@
 <!DOCTYPE html>
 <html>
 	<head>
-        <meta charset="utf-8" />
+		<meta charset="utf-8" />
 		<title>Wavebyte (Beta)</title>
-		<style>
-@import url(http://fonts.googleapis.com/css?family=Open+Sans);
-* {
-	padding: 0;
-	margin: 0;
-}
-body {
-	background-color: #222;
-	color: #fff;
-	font-family: 'Open Sans', sans-serif;
-}
-a {
-	color: #428bca;
-}
-#controls {
-	background-color: #444;
-	padding: 20px;
-	margin: 20px;
-	float: left;
-}
-#controls * {
-	float: left;
-}
-#controls span {
-	margin-left: 20px;
-}
-#graphics {
-	z-index: -1000;
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-}
-#error {
-	position: absolute;
-	top: 45%;
-	width: 100%;
-	padding: 2em 0;
-	text-align: center;
-	transition: opacity 0.1s ease;
-	background-color: #d9534f;
-	font-size: large;
-}
-		</style>
+		<link rel="stylesheet" type="text/css" href="components/font-awesome/css/font-awesome.min.css">
+		<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">-->
+		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<script data-main="js/main" src="components/requirejs/require.js"></script>
 	</head>
 	<body>
-		<div id="controls">
-			<input type="file" id="uploadedFile"></input>
-			<input type='button' id='startButton' value="Start">
-			<input type='button' id='stopButton' value="Stop">
+
+        <div id="audio-controls" class="sidebar-push" v-class="pushed: showSidebar">
+            <button v-on="click: toggleSidebar()" class="btn"><i class="fa fa-bars"></i></button>
+            <audio controls>
+                <p>Browser too old to support HTML5 audio? How depressing!</p>
+            </audio>
+			<button class="btn" v-on="click: showLoadModal = true">Change Song</button>
+        </div>
+
+
+        <div id="graphics">
+            <div id="wave"></div>
+        </div>
+
+
+		<div id="controls" class="sidebar" v-class="show: showSidebar">
+			<main>
+				<h3>Song</h3>
+				<section>
+					<span style="text-overflow: ellipsis">{{songTitle}}</span>
+				</section>
+				<h3>Visualizer</h3>
+				<h4>Colors</h4>
+				<section>
+					<label>
+						Min
+						<input type="color" v-model="minColor" />
+					</label>
+					<label>
+						Max
+						<input type="color" v-model="maxColor" />
+					</label>
+				</section>
+				<h4>Params</h4>
+				<section>
+					<label>
+						radPow
+						<input type="range" min=1.0 max=2.0 step=0.05 v-model="radPow" />
+						<input type="number" v-model="radPow" />
+					</label>
+				</section>
+			</main>
 		</div>
-		<div id="graphics">
-			<div id="wave"></div>
-		</div>
-		<div id="error">
+
+
+        <div id="load-modal" class="modal" v-class="show: showLoadModal">
+            <button class="modal-close btn" v-on="click: showLoadModal = false"><i class="fa fa-close"></i></button>
+            <main>
+				<label>
+					Paste Soundcloud URL here and hit Enter:
+					<input type="text" v-model="scUrl" v-on="keyup: submitUrl(scUrl) | key enter" />
+				</label>
+			</main>
+        </div>
+
+
+		<div id="error" v-show="showError">
 			<span id="error-msg">
-				It appears your browser doesn't support WebGL. Sorry!
+				{{errorMsg}}
 			</span>
 			<br>
 			Note: This site has been developed to work with <a href="https://www.google.com/chrome/browser/">Google Chrome</a>.
+			<br>
+			Check <a href="http://get.webgl.org/">get.webgl.org</a> to test if your browser supports WebGL.
 		</div>
+
+
 	</body>
 </html>
