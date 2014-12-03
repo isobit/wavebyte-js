@@ -41,8 +41,8 @@ define([
 			scUrl: "",
 			songTitle: "N/A",
 
-			minColor: "#009124",
-			maxColor: "#0400FF",
+			minColor: "#007BC2",
+			maxColor: "#00FF7F",
 			radPow: 1.5,
 
 			showError: false,
@@ -64,7 +64,6 @@ define([
 				return Soundcloud.resolve(url)
 					.then(function(error, response, xhr) {
 						var data = JSON.parse(response);
-						console.log(data);
 						if (data.kind == "track") {
 							if (data.streamable) {
 								audio.src = data.stream_url + "?&client_id=" + Soundcloud.client_id;
@@ -151,13 +150,11 @@ define([
 	}
 
 	function rgbToVec3(rgb) {
-		console.log(rgb);
 		var vec = new THREE.Vector3(
 			rgb.r / 256,
 			rgb.g / 256,
 			rgb.b / 256
 		);
-		console.log(vec);
 		return vec;
 	}
 
@@ -167,6 +164,9 @@ define([
 	}, false, true);
 
 	page.$watch('maxColor', function(val) {
+		var vec = rgbToVec3(hexToRgb(val));
+		console.log(vec);
+		console.log(vec.multiplyScalar(1 - 0.01));
 		waveView.material.uniforms['maxColor'].value =
 			rgbToVec3(hexToRgb(val));
 	}, false, true);
