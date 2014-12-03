@@ -90,12 +90,10 @@ define([
 					"uniform vec3 maxColor;" +
 					"varying float audio;" +
 					"void main() {" +
-					//"vec3 maxColor = vec3(0.2, 0.8, 0.2);" +
-					//"vec3 minColor = vec3(0.2, 0.2, 0.6);" +
-					"float mix = audio + 0.1;" +
-					"vec3 color = maxColor * mix + minColor / mix;" +
-					//"float alpha = audio + 0.1;" +
-					"gl_FragColor = vec4(color.rgb, 1.0);" +
+					"float mix = pow(audio, 2.0);" +
+					"vec3 maxColorMixed = maxColor * mix;" +
+					"vec3 minColorMixed = minColor * (1.0 - mix);" +
+					"gl_FragColor = vec4(maxColorMixed + minColorMixed, 1.0);" +
 					"}"
 				});
 				this.controls = new THREE.OrbitControls(this.camera, this.element);
