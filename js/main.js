@@ -5,13 +5,12 @@ require.config({
 		"vue": "../components/vue/dist/vue",
 		"promise": "../components/promisejs/promise",
 		"threejs": "../components/threejs/build/three.min",
-		"OrbitControls": "lib/OrbitControls"
 	},
 	shim: {
 		"threejs": {
 			exports: "THREE"
 		},
-		"OrbitControls": ["threejs"]
+		"lib/OrbitControls": ["threejs"]
 	}
 });
 
@@ -41,9 +40,11 @@ define([
 			scUrl: "",
 			songTitle: "N/A",
 
-			minColor: "#007BC2",
+			minColor: "#444444",
 			maxColor: "#00FF7F",
+            beatColor: "#007BC2",
 			radPow: 1.5,
+            beatDecay: 0.995,
 
 			showError: false,
 			errorMsg: "Whoops! Something went wrong.",
@@ -102,6 +103,21 @@ define([
 	// Source node
 	var source = AudioContext.createMediaElementSource(audio);
 
+	// Mic
+	navigator.getUserMedia = ( navigator.getUserMedia ||
+	navigator.webkitGetUserMedia ||
+	navigator.mozGetUserMedia ||
+	navigator.msGetUserMedia);
+	navigator.getUserMedia({audio: true},
+		function(stream) {
+			//set up source
+			console.log("Got stream");
+			var micSource = AudioContext.createMediaStreamSource(stream);
+			console.log(micSource);
+			micSource.connect(analyser);
+		}, function(error) {console.log(error); console.log("2");}
+	);
+
 	// Analyser node
 	var analyser = AudioContext.createAnalyser();
 	analyser.fftSize = 2048;
@@ -112,9 +128,9 @@ define([
 	}
 
 	// Beat analyser node
-	//var beatAnalyser = new BeatNode(getFreqData, function() {
-	//	setTimeout(function() { waveView.material.uniforms['beat'].value = 1.0; }, 0);
-	//});
+	var beatAnalyser = new BeatNode(getFreqData, function() {
+		setTimeout(function() { waveView.material.uniforms['beat'].value = 1.0; }, 0);
+	});
 
 	// Delay node (to compensate for render time)
 	var delay = AudioContext.createDelay(75);
@@ -130,7 +146,7 @@ define([
 
 	source.connect(analyser);
 	analyser.connect(delay);
-	//analyser.connect(beatAnalyser.input);
+	analyser.connect(beatAnalyser.input);
 	delay.connect(AudioContext.destination);
 
 	// Visuals --------------------------------------
@@ -164,16 +180,22 @@ define([
 	}, false, true);
 
 	page.$watch('maxColor', function(val) {
-		var vec = rgbToVec3(hexToRgb(val));
-		console.log(vec);
-		console.log(vec.multiplyScalar(1 - 0.01));
 		waveView.material.uniforms['maxColor'].value =
 			rgbToVec3(hexToRgb(val));
 	}, false, true);
 
+    page.$watch('beatColor', function(val) {
+        waveView.material.uniforms['beatColor'].value =
+            rgbToVec3(hexToRgb(val));
+    }, false, true);
+
 	page.$watch('radPow', function(val) {
 		waveView.material.uniforms['radPow'].value = val;
 	}, false, true);
+
+    page.$watch('beatDecay', function(val) {
+        beatAnalyser.BEAT_DECAY_RATE = val;
+    }, false, true);
 
 	// Resizing
 
