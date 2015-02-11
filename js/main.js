@@ -44,7 +44,7 @@ define([
 			maxColor: "#00FF7F",
             beatColor: "#007BC2",
 			radPow: 1.5,
-            beatDecay: 0.995,
+            beatDecay: 0.9925,
 
 			showError: false,
 			errorMsg: "Whoops! Something went wrong.",
