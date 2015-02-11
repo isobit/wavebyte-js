@@ -41,6 +41,10 @@
 						Max
 						<input type="color" v-model="maxColor" />
 					</label>
+                    <label>
+                        Beat
+                        <input type="color" v-model="beatColor" />
+                    </label>
 				</section>
 				<h4>Params</h4>
 				<section>
@@ -49,6 +53,13 @@
 						<input type="range" min=1.0 max=2.0 step=0.05 v-model="radPow" />
 						<input type="number" v-model="radPow" />
 					</label>
+                    <br>
+                    <h3>Beat</h3>
+                    <label>
+                        Decay
+                        <input type="range" min=0.9 max=1.0 step=0.005 v-model="beatDecay" />
+                        <input type="number" v-model="beatDecay" />
+                    </label>
 				</section>
 			</main>
 		</div>

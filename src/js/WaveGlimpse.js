@@ -1,7 +1,7 @@
 define([
 	"lib/glimpse",
 	"threejs",
-	"OrbitControls"
+	"lib/OrbitControls"
 ], function(glimpse, THREE) {
 
 	var WaveGlimpse = function(getFreqData) {
@@ -56,7 +56,11 @@ define([
 						maxColor: {
 							type: "v3",
 							value: new THREE.Vector3(1, 1, 1)
-						}
+						},
+                        beatColor: {
+                            type: "v3",
+                            value: new THREE.Vector3(1, 1, 1)
+                        }
 						//h: {
 						//	type: "f",
 						//	value: 0.0
@@ -88,12 +92,14 @@ define([
 					"uniform float beat;" +
 					"uniform vec3 minColor;" +
 					"uniform vec3 maxColor;" +
+                    "uniform vec3 beatColor;" +
 					"varying float audio;" +
 					"void main() {" +
 					"float mix = pow(audio, 2.0);" +
 					"vec3 maxColorMixed = maxColor * mix;" +
-					"vec3 minColorMixed = minColor * (1.0 - mix);" +
-					"gl_FragColor = vec4(maxColorMixed + minColorMixed, 1.0);" +
+					"vec3 minColorMixed = minColor * (1.0 - mix) * (1.0 - beat);" +
+                    "vec3 beatColorMixed = beatColor * beat * (1.0 - mix);" +
+					"gl_FragColor = vec4(maxColorMixed + minColorMixed + beatColorMixed, 1.0);" +
 					"}"
 				});
 				this.controls = new THREE.OrbitControls(this.camera, this.element);
