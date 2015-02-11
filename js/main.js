@@ -104,19 +104,19 @@ define([
 	var source = AudioContext.createMediaElementSource(audio);
 
 	// Mic
-	navigator.getUserMedia = ( navigator.getUserMedia ||
-	navigator.webkitGetUserMedia ||
-	navigator.mozGetUserMedia ||
-	navigator.msGetUserMedia);
-	navigator.getUserMedia({audio: true},
-		function(stream) {
-			//set up source
-			console.log("Got stream");
-			var micSource = AudioContext.createMediaStreamSource(stream);
-			console.log(micSource);
-			micSource.connect(analyser);
-		}, function(error) {console.log(error); console.log("2");}
-	);
+	//navigator.getUserMedia = ( navigator.getUserMedia ||
+	//navigator.webkitGetUserMedia ||
+	//navigator.mozGetUserMedia ||
+	//navigator.msGetUserMedia);
+	//navigator.getUserMedia({audio: true},
+	//	function(stream) {
+	//		//set up source
+	//		console.log("Got stream");
+	//		var micSource = AudioContext.createMediaStreamSource(stream);
+	//		console.log(micSource);
+	//		micSource.connect(analyser);
+	//	}, function(error) {console.log(error); console.log("2");}
+	//);
 
 	// Analyser node
 	var analyser = AudioContext.createAnalyser();
